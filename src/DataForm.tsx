@@ -1,9 +1,8 @@
 import React, {useState,useEffect,ChangeEvent, FormEvent } from 'react';
 import Parse from 'parse';
-import Login from './Login';
-import DataForm from './DataForm';
-import UyumList from './UyumList';
-// import UyumList from './UyumList2';
+import {styles} from './styles';
+import InputField from './InputField';
+//import Login from './Login';
 
 // Initialize Parse :
 Parse.initialize("i3tzTVEHYEb1EjCo1cyNzHQNz3Ft0oyHX0gjmzD2",
@@ -22,7 +21,7 @@ interface Status {
   message: string;
 }
 
-const UyumApp: React.FC = () => {
+const DataForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
     sentence: '',
     engTrans: '',
@@ -55,7 +54,7 @@ const UyumApp: React.FC = () => {
   } /* End of showMessage */
 
   // --- User Login ---
-  async function logInUser() {
+  /*async function logInUser() {
     const username = prompt('Enter username:');
     const password = prompt('Enter password:');
     if (!username || !password) {
@@ -142,21 +141,7 @@ const UyumApp: React.FC = () => {
     }
   };
 
-  return (
-    <div style={styles.container}>
-      <UyumList/>
-    </div>
-  )
-  return (
-    <div style={styles.container}>
-      {(user===null) &&
-      <Login/>
-      }
-      {(user!==null) &&
-      <DataForm/>
-      }
-    </div>
-  )
+
   return (
     <div style={styles.container}>
       <div id="message">{statusMsg}</div>
@@ -179,17 +164,17 @@ const UyumApp: React.FC = () => {
       </div>
 
       <form onSubmit={handleSubmit} style={styles.form}>
-        <InputField fieldID={'sentence'}
+        <DtFrmField fieldID={'sentence'}
                     fieldIntro={'Enter the Turkish sentence :'}
                     fieldVal={formData.sentence}
                     fieldChgCbkFn={handleChange}
                     disable={loading} />
-        <InputField fieldID={'engTrans'}
+        <DtFrmField fieldID={'engTrans'}
                     fieldIntro={'Enter the English translation :'}
                     fieldVal={formData.engTrans}
                     fieldChgCbkFn={handleChange}
                     disable={loading} />
-        <InputField fieldID={'jpnTrans'}
+        <DtFrmField fieldID={'jpnTrans'}
                     fieldIntro={'Enter the Japanese translation :'}
                     fieldVal={formData.jpnTrans}
                     fieldChgCbkFn={handleChange}
@@ -209,13 +194,6 @@ const UyumApp: React.FC = () => {
       </form>
       </>
       }
-      {(user===null) &&
-      // <button onClick={logInUser}
-      //         style={styles.loginButton} >
-      //   Login
-      // </button>
-      <Login/>
-      }
       
       {status.message && (
         <div style={{
@@ -229,91 +207,10 @@ const UyumApp: React.FC = () => {
       )}
     </div>
   );
-}; /* End of UyumApp */
-
-const coreStyles = {
-  padding: '8px 16px',
-  color: 'white',
-  border: 'none',
-  borderRadius: '4px',
-  fontWeight: 'bold',
-  cursor: 'pointer',
-  transition: 'background-color 0.3s ease'
-};
-
-const extendStyles = (overrides: React.CSSProperties) => ({
-  ...coreStyles,
-  ...overrides
-});
+}; /* End of DataForm */
 
 
-// Styles with proper TypeScript typing
-const styles: { [key: string]: React.CSSProperties } = {
-  container: {
-    maxWidth: '400px',
-    margin: '50px auto',
-    padding: '20px',
-    background: '#f5f5f5',
-    borderRadius: '8px',
-    fontFamily: 'Arial, sans-serif'
-  },
-  header: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: '20px'
-  },
-  title: {
-    // textAlign: 'center',
-    color: '#333',
-    // marginBottom: '20px'
-    margin: 0
-
-  },
-  loginButton: extendStyles({ backgroundColor: '#1e7fdf', fontSize: '18px' }),
-  logoutButton: extendStyles({ backgroundColor: '#dc3545', fontSize: '14px' }),
-
-
-  form: {
-    display: 'flex',
-    flexDirection: 'column'
-  },
-  formGroup: {
-    marginBottom: '15px'
-  },
-  label: {
-    display: 'block',
-    marginBottom: '5px',
-    fontWeight: 'bold',
-    color: '#555'
-  },
-  input: {
-    width: '100%',
-    padding: '10px',
-    border: '1px solid #ddd',
-    borderRadius: '4px',
-    boxSizing: 'border-box',
-    fontSize: '14px'
-  },
-  button: {
-    padding: '10px',
-    background: '#28a745',
-    color: 'white',
-    border: 'none',
-    borderRadius: '4px',
-    fontSize: '16px',
-    fontWeight: 'bold',
-    transition: 'background 0.3s'
-  },
-  message: {
-    marginTop: '10px',
-    padding: '10px',
-    borderRadius: '4px'
-  }
-}; /* DataForm-styles */
-
-
-function InputField({fieldID,fieldIntro,fieldVal,fieldChgCbkFn,disable}:{
+function DtFrmField({fieldID,fieldIntro,fieldVal,fieldChgCbkFn,disable}:{
   fieldID:string,
   fieldIntro:string,
   fieldVal:string
@@ -321,23 +218,16 @@ function InputField({fieldID,fieldIntro,fieldVal,fieldChgCbkFn,disable}:{
   disable:boolean
 }) {
   return (
-    <div style={styles.formGroup}>
-      <label htmlFor={fieldID} style={styles.label}>
-        {fieldIntro}
-      </label>
-      <input
-        type="text"
-        id={fieldID}
-        name={fieldID}
-        value={fieldVal}
-        onChange={fieldChgCbkFn}
-        style={styles.input}
-        required
-        disabled={disable}
-      />
-    </div>
+    <InputField fieldID={fieldID}
+                fieldIntro={fieldIntro}
+                fieldVal={fieldVal}
+                fieldChgCbkFn={fieldChgCbkFn}
+                disable={disable}
+                globStyl={styles.formGroup}
+                lblStyl={styles.label}
+                inpStyl={styles.input} />
   )
-} /* InputField */
+} /* DtFrmField */
 
 
-export default UyumApp;
+export default DataForm;
