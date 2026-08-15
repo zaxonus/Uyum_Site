@@ -2,10 +2,11 @@ import {useState,ChangeEvent} from 'react';
 import Parse from 'parse';
 import {styles} from './styles';
 import InputField from './InputField';
+import { isTypeOfExpression } from 'typescript';
 
 
 // const Login: React.FC = () => {
-function Login() {
+function Login({cbkFn}:{cbkFn?:(u:any)=>void}) {
   const [usrNam,setUsrNam] = useState<string>(''),
         [psWrd,setPsWrd] = useState<string>(''),
         [statusMsg,setStatusMsg] = useState<string>('')
@@ -29,6 +30,7 @@ function Login() {
       const user = await Parse.User.logIn(usrNam, psWrd);
       setStatusMsg(`✅ Login successful! Welcome, ${user.get('username')}`);
       console.log('User logged in:', user);
+      if (typeof cbkFn !== 'undefined') cbkFn(user)
     } catch (error) {
       if (error instanceof Parse.Error) {
         // Properly typed Parse error :

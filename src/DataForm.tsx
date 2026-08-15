@@ -21,7 +21,8 @@ interface Status {
   message: string;
 }
 
-const DataForm: React.FC = () => {
+// const DataForm: React.FC = ({cbkFn}:{cbkFn?:()=>void}) => {
+function DataForm({cbkFn}:{cbkFn?:()=>void}) {
   const [formData, setFormData] = useState<FormData>({
     sentence: '',
     engTrans: '',
@@ -86,6 +87,7 @@ const DataForm: React.FC = () => {
       // Optionally redirect or clear form
       // setFormData({ field_one: '', field_two: '', field_three: '' });
       setFormData({ sentence: '', engTrans: '', jpnTrans: '' });
+      if (typeof cbkFn !== 'undefined') cbkFn()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
       setStatus({

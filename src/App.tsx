@@ -1,8 +1,11 @@
 import React, {useState,useEffect,ChangeEvent, FormEvent } from 'react';
+import {Routes,Route} from 'react-router-dom';
 import Parse from 'parse';
 import Login from './Login';
 import DataForm from './DataForm';
 import UyumList from './UyumList';
+import ExtraEntry from './ExtraEntry';
+import Katki from './Katki';
 // import UyumList from './UyumList2';
 
 // Initialize Parse :
@@ -142,6 +145,13 @@ const UyumApp: React.FC = () => {
     }
   };
 
+  return (
+    <Routes>
+      <Route path="/" element={<UyumList/>} />
+      <Route path="/ExtraEntry" element={<ExtraEntry />} />
+      <Route path="/Katki" element={<Katki/>} />
+    </Routes>
+  );
   return (
     <div style={styles.container}>
       <UyumList/>
