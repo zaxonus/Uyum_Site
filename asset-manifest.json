@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Uyum_Site/static/css/main.175439fc.css",
-    "main.js": "/Uyum_Site/static/js/main.6e2b7bbf.js",
+    "main.css": "/Uyum_Site/static/css/main.f19ec30c.css",
+    "main.js": "/Uyum_Site/static/js/main.e02053c6.js",
     "static/js/453.5f826864.chunk.js": "/Uyum_Site/static/js/453.5f826864.chunk.js",
     "index.html": "/Uyum_Site/index.html",
-    "main.175439fc.css.map": "/Uyum_Site/static/css/main.175439fc.css.map",
-    "main.6e2b7bbf.js.map": "/Uyum_Site/static/js/main.6e2b7bbf.js.map",
+    "main.f19ec30c.css.map": "/Uyum_Site/static/css/main.f19ec30c.css.map",
+    "main.e02053c6.js.map": "/Uyum_Site/static/js/main.e02053c6.js.map",
     "453.5f826864.chunk.js.map": "/Uyum_Site/static/js/453.5f826864.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.175439fc.css",
-    "static/js/main.6e2b7bbf.js"
+    "static/css/main.f19ec30c.css",
+    "static/js/main.e02053c6.js"
   ]
 }
