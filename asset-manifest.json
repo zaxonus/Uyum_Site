@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/Uyum_Site/static/css/main.f19ec30c.css",
-    "main.js": "/Uyum_Site/static/js/main.e02053c6.js",
-    "static/js/453.5f826864.chunk.js": "/Uyum_Site/static/js/453.5f826864.chunk.js",
-    "index.html": "/Uyum_Site/index.html",
-    "main.f19ec30c.css.map": "/Uyum_Site/static/css/main.f19ec30c.css.map",
-    "main.e02053c6.js.map": "/Uyum_Site/static/js/main.e02053c6.js.map",
-    "453.5f826864.chunk.js.map": "/Uyum_Site/static/js/453.5f826864.chunk.js.map"
+    "main.css": "/static/css/main.ee92be17.css",
+    "main.js": "/static/js/main.2667ff98.js",
+    "static/js/453.5f826864.chunk.js": "/static/js/453.5f826864.chunk.js",
+    "index.html": "/index.html",
+    "main.ee92be17.css.map": "/static/css/main.ee92be17.css.map",
+    "main.2667ff98.js.map": "/static/js/main.2667ff98.js.map",
+    "453.5f826864.chunk.js.map": "/static/js/453.5f826864.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.f19ec30c.css",
-    "static/js/main.e02053c6.js"
+    "static/css/main.ee92be17.css",
+    "static/js/main.2667ff98.js"
   ]
 }
