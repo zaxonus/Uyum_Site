@@ -11,6 +11,7 @@ import ContributionGate from './ContributionGate';
 import QRSquare from './components/QRSquare';
 import DataForm from './DataForm';
 import {FormData} from './types';
+import Login from "./Login";
 // import ParseObject from "parse/types/ParseObject";
 
 
@@ -18,6 +19,7 @@ function UyumList({mng=false}:{mng?:boolean}) {
   const [user,setUser] = useState<Parse.User|null>(null),
         [ticFlag,setTicFlag] = useState<boolean>(false),
         [ticData,setTicData] = useState<boolean>(false),
+        [mustLogin,setMustLogin] = useState<boolean>(false),
         [contribute,setContribute] = useState<boolean>(false),
         [contribGate,setContribGate] = useState<boolean>(false),
         [dataArray,setDataArray] = useState<Parse.Object[]>([]),
@@ -41,16 +43,16 @@ function UyumList({mng=false}:{mng?:boolean}) {
 
   useEffect(() => {
     const currentUser = Parse.User.current();
-		// console.log('ticFlag = ',ticFlag)
-		// console.log('currentUser = ',currentUser)
     if (currentUser) {
       setUser(currentUser)
       setContribute(true)
+      if (mustLogin) setMustLogin(false)
     } else {
       setUser(null)
       setContribute(false)
+      if (mng) setMustLogin(true)
     }
-  }, [ticFlag]);
+  }, [mng,ticFlag,user]);
 
 
   useEffect(() => {
@@ -341,6 +343,7 @@ function UyumList({mng=false}:{mng?:boolean}) {
     // console.log("This case is not yet handled by movePivot ....")
   } /* End of movePivot */
 
+  if (mustLogin) return <Login cbkFn={setUser} />
 
   if (showQR)
     return (
@@ -449,6 +452,7 @@ function UyumList({mng=false}:{mng?:boolean}) {
         onClick={async ()=> {
           await Parse.User.logOut()
           setContribute(false)
+          setTicFlag(!ticFlag)
         }}
         style={styles.logoutButton}
         onMouseEnter={(e) => {
