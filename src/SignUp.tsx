@@ -5,26 +5,36 @@ import InputField from './InputField';
 import { isTypeOfExpression } from 'typescript';
 
 
-// const Login: React.FC = () => {
-function Login({cbkFn}:{cbkFn?:(u:any)=>void}) {
+function SignUp({cbkFn}:{cbkFn?:(u:any)=>void}) {
   const [usrNam,setUsrNam] = useState<string>(''),
         [psWrd,setPsWrd] = useState<string>(''),
+        [eMail,setEMail] = useState<string>(''),
         [statusMsg,setStatusMsg] = useState<string>('')
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>): void => {
     const {name,value} = e.target;
     if (name=='usrNam') setUsrNam(value)
     if (name=='psWrd') setPsWrd(value)
+    if (name=='eMail') setEMail(value)
   };
 
 
-  // --- User Login ---
-  async function logInUser() {
-    if (!usrNam.length||!psWrd.length) {
-      setStatusMsg('⚠️ Username and password are required.');
+  // --- User Sign Up ---
+  async function signUp() {
+    if (!usrNam.length||!psWrd.length||!eMail.length) {
+      setStatusMsg('⚠️ Username, password  and email are required.');
       return;
     }
 
+    // Create a new user.
+    const user = new Parse.User();
+    user.set("username",usrNam);
+    user.set("password",psWrd);
+    user.set("email",eMail);
+
+    user.signUp().then(() => {
+    }).catch(error => console.error('Error:', error.message));
+    /*
     setStatusMsg('Attempting to log in...');
     try {
       const user = await Parse.User.logIn(usrNam, psWrd);
@@ -44,8 +54,8 @@ function Login({cbkFn}:{cbkFn?:(u:any)=>void}) {
         setStatusMsg(`❌ Login error: Unknown error occurred`);
         console.error('Unexpected error:', error);
       }
-    }
-  } /* End of logInUser */
+    }*/
+  } /* End of signUp */
 
 
   return (
@@ -54,7 +64,7 @@ function Login({cbkFn}:{cbkFn?:(u:any)=>void}) {
       <div style={styles.status}>{statusMsg}</div>
       }
       <InputField fieldID={'usrNam'}
-                  fieldIntro={'Enter username :'}
+                  fieldIntro={'Choose a username :'}
                   fieldVal={usrNam}
                   fieldChgCbkFn={handleChange}
                   disable={false}
@@ -63,7 +73,7 @@ function Login({cbkFn}:{cbkFn?:(u:any)=>void}) {
                   inpStyl={styles.input}
                   autoCap={'off'} />
       <InputField fieldID={'psWrd'}
-                  fieldIntro={'Enter password :'}
+                  fieldIntro={'Choose a password :'}
                   fieldVal={psWrd}
                   fieldChgCbkFn={handleChange}
                   disable={false}
@@ -71,13 +81,22 @@ function Login({cbkFn}:{cbkFn?:(u:any)=>void}) {
                   lblStyl={styles.label}
                   inpStyl={styles.input}
                   hide={true} />
-      <button onClick={logInUser}
+      <InputField fieldID={'eMail'}
+                  fieldIntro={'Enter an email address :'}
+                  fieldVal={eMail}
+                  fieldChgCbkFn={handleChange}
+                  disable={false}
+                  globStyl={styles.formGroup}
+                  lblStyl={styles.label}
+                  inpStyl={styles.input}
+                  autoCap={'off'} />
+      <button onClick={signUp}
               style={styles.loginButton} >
-        Login
+        Sign Up
       </button>
     </div>
   )
-} /* End of Login */
+} /* End of SignUp */
 
 
-export default Login;
+export default SignUp;

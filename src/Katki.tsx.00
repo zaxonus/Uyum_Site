@@ -19,6 +19,9 @@ function Katki() {
   }, [ticFlag]);
 
 	return (
+		// <div style={styles.container}>
+		// 	<DataForm/>
+    // </div>
     <div style={styles.container}>
       {(user===null) &&
       <Login cbkFn={setUser} />
@@ -28,7 +31,4 @@ function Katki() {
       }
     </div>
   ) 
-} /* End of Katki */
-
-
-export default Katki;
+} export default Katki;

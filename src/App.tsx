@@ -1,12 +1,13 @@
 import React, {useState,useEffect,ChangeEvent, FormEvent } from 'react';
 import {Routes,Route} from 'react-router-dom';
 import Parse from 'parse';
+import SignUp from './SignUp';
 import Login from './Login';
 import DataForm from './DataForm';
 import UyumList from './UyumList';
 import ExtraEntry from './ExtraEntry';
 import Katki from './Katki';
-// import UyumList from './UyumList2';
+import DataUpLoader from './DataUpLoader';
 
 // Initialize Parse :
 Parse.initialize("i3tzTVEHYEb1EjCo1cyNzHQNz3Ft0oyHX0gjmzD2",
@@ -148,8 +149,11 @@ const UyumApp: React.FC = () => {
   return (
     <Routes>
       <Route path="/" element={<UyumList/>} />
-      <Route path="/ExtraEntry" element={<ExtraEntry />} />
+      <Route path="/SignUp" element={<SignUp/>} />
+      <Route path="/ExtraEntry" element={<ExtraEntry/>} />
+      <Route path="/DataLoad" element={<DataUpLoader/>} />
       <Route path="/Katki" element={<Katki/>} />
+      <Route path="/Manage" element={<UyumList mng={true} />} />
     </Routes>
   );
   return (

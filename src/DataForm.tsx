@@ -2,7 +2,9 @@ import React, {useState,useEffect,ChangeEvent, FormEvent } from 'react';
 import Parse from 'parse';
 import {styles} from './styles';
 import InputField from './InputField';
+import AwsmBtn from './AwsmBtn';
 //import Login from './Login';
+import {LangLevel,FormData} from './types';
 
 // Initialize Parse :
 Parse.initialize("i3tzTVEHYEb1EjCo1cyNzHQNz3Ft0oyHX0gjmzD2",
@@ -10,11 +12,13 @@ Parse.initialize("i3tzTVEHYEb1EjCo1cyNzHQNz3Ft0oyHX0gjmzD2",
 Parse.serverURL = "https://parseapi.back4app.com/";
 
 // Define interfaces for type safety
-interface FormData {
+/*interface FormData {
   sentence: string;
   engTrans: string;
   jpnTrans: string;
-}
+}*/
+
+// type LangLevel = 'Casual'|'Formal'|'Neutral';
 
 interface Status {
   type: 'success' | 'error' | '';
@@ -22,11 +26,11 @@ interface Status {
 }
 
 // const DataForm: React.FC = ({cbkFn}:{cbkFn?:()=>void}) => {
-function DataForm({cbkFn}:{cbkFn?:()=>void}) {
+function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
   const [formData, setFormData] = useState<FormData>({
-    sentence: '',
-    engTrans: '',
-    jpnTrans: ''
+    sentence: data?data.sentence:'',
+    engTrans: data?data.engTrans:'',
+    jpnTrans: data?data.jpnTrans:''
   });
   
   const [status, setStatus] = useState<Status>({ 
@@ -36,12 +40,22 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
   
   const [user,setUser] = useState<Parse.User|null>(null),
         [loading,setLoading] = useState<boolean>(false),
-        [statusMsg,setStatusMsg] = useState<string>('')
+        [statusMsg,setStatusMsg] = useState<string>(''),
+        [langProtocol,setLangProtocol] = useState<LangLevel>('Neutral')
 
   useEffect(() => {
     const currentUser = Parse.User.current();
     if (currentUser) {
       setUser(currentUser)
+    }
+
+      // setFormData(prevState => ({
+      //   ...prevState,
+      //   lngProtoc: 'Formal'
+      // }));
+    if (data && (typeof data.lngProtoc !== 'undefined')) {
+      if (data.lngProtoc == 'Formal') setLangProtocol('Formal');
+      if (data.lngProtoc == 'Casual') setLangProtocol('Casual');
     }
   }, []);
 
@@ -112,12 +126,23 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
     e.preventDefault();
     setLoading(true);
     setStatus({ type: '', message: '' });
-    
-    const sentenRcd = new Parse.Object("Uyum_Sentences");
-    sentenRcd.set("sentence", formData.sentence);
-    sentenRcd.set("engTrans", formData.engTrans);
-    sentenRcd.set("jpnTrans", formData.jpnTrans);
-    sentenRcd.set("order", new Date().getTime());
+
+    let sentenRcd
+
+    if (data && (typeof data.rcdID !== 'undefined')) {
+      const Uyum_Sentences = Parse.Object.extend('Uyum_Sentences'),
+            query = new Parse.Query(Uyum_Sentences);
+      sentenRcd = await query.get(data.rcdID);
+    } else sentenRcd = new Parse.Object("Uyum_Sentences");
+
+    // const sentenRcd = new Parse.Object("Uyum_Sentences");
+    sentenRcd.set("sentence", formData.sentence.trim());
+    sentenRcd.set("engTrans", formData.engTrans.trim());
+    sentenRcd.set("jpnTrans", formData.jpnTrans.trim());
+    if (langProtocol=='Formal') sentenRcd.set("formalFlag", true);
+    if (langProtocol=='Casual') sentenRcd.set("casualFlag", true);
+    if (!data) sentenRcd.set("order", new Date().getTime());
+    sentenRcd.set("ownerID", user?.id);
 
     try {
       const result = await sentenRcd.save();
@@ -131,6 +156,7 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
         engTrans: '', 
         jpnTrans: '' 
       });
+      setLangProtocol('Neutral');
     } catch (error) {
       // Type guard for error
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -142,6 +168,11 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
       setLoading(false);
     }
   };
+
+
+  const swapLangProtocol = (protocol:LangLevel) => {
+    setLangProtocol(langProtocol==protocol?'Neutral':protocol)
+  } /* End of swapLangProtocol */
 
 
   return (
@@ -170,7 +201,8 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
                     fieldIntro={'Enter the Turkish sentence :'}
                     fieldVal={formData.sentence}
                     fieldChgCbkFn={handleChange}
-                    disable={loading} />
+                    disable={loading}
+                    need={true} />
         <DtFrmField fieldID={'engTrans'}
                     fieldIntro={'Enter the English translation :'}
                     fieldVal={formData.engTrans}
@@ -181,7 +213,21 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
                     fieldVal={formData.jpnTrans}
                     fieldChgCbkFn={handleChange}
                     disable={loading} />
-        
+
+
+        <div className='flex justify-around items-center m-2'>
+          <AwsmBtn clickFn={()=>{swapLangProtocol('Formal')}}
+                   btnShape='user-tie'
+                   disable={false}
+                   color={langProtocol=='Formal'?'indigo-700':'gray-300'}
+                   size='2x' />
+          <AwsmBtn clickFn={()=>{swapLangProtocol('Casual')}}
+                   btnShape='hand-peace'
+                   disable={false}
+                   color={langProtocol=='Casual'?'orange-700':'gray-300'}
+                   size='2x' />
+        </div>
+
         <button 
           type="submit" 
           style={{
@@ -196,8 +242,7 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
       </form>
       </>
       }
-      
-      {status.message && (
+      {/* {status.message && (
         <div style={{
           ...styles.message,
           backgroundColor: status.type === 'success' ? '#d4edda' : '#f8d7da',
@@ -206,18 +251,20 @@ function DataForm({cbkFn}:{cbkFn?:()=>void}) {
         }}>
           {status.message}
         </div>
-      )}
+      )} */}
     </div>
   );
 }; /* End of DataForm */
 
 
-function DtFrmField({fieldID,fieldIntro,fieldVal,fieldChgCbkFn,disable}:{
+function DtFrmField({fieldID,fieldIntro,fieldVal,
+  fieldChgCbkFn,disable,need=false}:{
   fieldID:string,
   fieldIntro:string,
   fieldVal:string
   fieldChgCbkFn:(e:ChangeEvent<HTMLInputElement>)=>void
   disable:boolean
+  need?:boolean
 }) {
   return (
     <InputField fieldID={fieldID}
@@ -227,7 +274,8 @@ function DtFrmField({fieldID,fieldIntro,fieldVal,fieldChgCbkFn,disable}:{
                 disable={disable}
                 globStyl={styles.formGroup}
                 lblStyl={styles.label}
-                inpStyl={styles.input} />
+                inpStyl={styles.input}
+                need={need} />
   )
 } /* DtFrmField */
 

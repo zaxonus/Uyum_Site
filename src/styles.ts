@@ -38,7 +38,7 @@ export const styles: {[key:string]:React.CSSProperties} = {
 
   },
   loginButton: extendStyles({ backgroundColor: '#1e7fdf', fontSize: '18px' }),
-  logoutButton: extendStyles({ backgroundColor: '#dc3545', fontSize: '14px' }),
+  logoutButton: extendStyles({ backgroundColor: '#dc3545', fontSize: '17px' }),
   form: {
     display: 'flex',
     flexDirection: 'column'
