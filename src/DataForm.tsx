@@ -3,7 +3,7 @@ import Parse from 'parse';
 import {styles} from './styles';
 import InputField from './InputField';
 import AwsmBtn from './AwsmBtn';
-//import Login from './Login';
+import LogoutBtn from './components/LogoutBtn';
 import {LangLevel,FormData} from './types';
 
 // Initialize Parse :
@@ -11,14 +11,6 @@ Parse.initialize("i3tzTVEHYEb1EjCo1cyNzHQNz3Ft0oyHX0gjmzD2",
 		             "zkfZmh3TNVCZlBK2hRL3SOva8iBn4ezEUP8JSVg4");
 Parse.serverURL = "https://parseapi.back4app.com/";
 
-// Define interfaces for type safety
-/*interface FormData {
-  sentence: string;
-  engTrans: string;
-  jpnTrans: string;
-}*/
-
-// type LangLevel = 'Casual'|'Formal'|'Neutral';
 
 interface Status {
   type: 'success' | 'error' | '';
@@ -40,7 +32,7 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
   
   const [user,setUser] = useState<Parse.User|null>(null),
         [loading,setLoading] = useState<boolean>(false),
-        [statusMsg,setStatusMsg] = useState<string>(''),
+        // [statusMsg,setStatusMsg] = useState<string>(''),
         [langProtocol,setLangProtocol] = useState<LangLevel>('Neutral')
 
   useEffect(() => {
@@ -49,10 +41,6 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
       setUser(currentUser)
     }
 
-      // setFormData(prevState => ({
-      //   ...prevState,
-      //   lngProtoc: 'Formal'
-      // }));
     if (data && (typeof data.lngProtoc !== 'undefined')) {
       if (data.lngProtoc == 'Formal') setLangProtocol('Formal');
       if (data.lngProtoc == 'Casual') setLangProtocol('Casual');
@@ -60,47 +48,17 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
   }, []);
 
 
-  // --- UI Helper ---
-  function showMessage(text:string, isError = false) {
-    // const msgDiv = document.getElementById('message');
-    // msgDiv.innerHTML = text;
-    setStatusMsg(text)
-    //msgDiv.style.color = isError ? 'red' : 'black';
-  } /* End of showMessage */
-
-  // --- User Login ---
-  /*async function logInUser() {
-    const username = prompt('Enter username:');
-    const password = prompt('Enter password:');
-    if (!username || !password) {
-      showMessage('⚠️ Username and password are required.', true);
-      return;
-    }
-
-    showMessage('Attempting to log in...');
-    try {
-      const user = await Parse.User.logIn(username, password);
-      showMessage(`✅ Login successful! Welcome, ${user.get('username')}`);
-      console.log('User logged in:', user);
-    } catch (error) {
-      // showMessage(`❌ Login error: ${error.message}`, true);
-      showMessage(`❌ Login error: !!!`, true);
-      console.error('Login error:', error);
-    }
-  } /* End of logInUser */
-
-
   // Handle logout
   const handleLogout = async (): Promise<void> => {
     try {
-      await Parse.User.logOut();
+      // await Parse.User.logOut();
       setStatus({
         type: 'success',
         message: 'Logged out successfully!'
       });
       // Optionally redirect or clear form
       // setFormData({ field_one: '', field_two: '', field_three: '' });
-      setFormData({ sentence: '', engTrans: '', jpnTrans: '' });
+      setFormData({sentence:'',engTrans:'',jpnTrans:''});
       if (typeof cbkFn !== 'undefined') cbkFn()
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
@@ -125,17 +83,19 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
   const handleSubmit = async (e: FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     setLoading(true);
-    setStatus({ type: '', message: '' });
+    setStatus({type:'',message:''});
 
     let sentenRcd
 
-    if (data && (typeof data.rcdID !== 'undefined')) {
+    /*if (data && (typeof data.rcdID !== 'undefined')) {
       const Uyum_Sentences = Parse.Object.extend('Uyum_Sentences'),
             query = new Parse.Query(Uyum_Sentences);
       sentenRcd = await query.get(data.rcdID);
-    } else sentenRcd = new Parse.Object("Uyum_Sentences");
+    } else*/ sentenRcd = new Parse.Object("Uyum_Sentences");
 
     // const sentenRcd = new Parse.Object("Uyum_Sentences");
+
+    // The lines above seem to be partly unneeded .... ????
     sentenRcd.set("sentence", formData.sentence.trim());
     sentenRcd.set("engTrans", formData.engTrans.trim());
     sentenRcd.set("jpnTrans", formData.jpnTrans.trim());
@@ -144,13 +104,39 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
     if (!data) sentenRcd.set("order", new Date().getTime());
     sentenRcd.set("ownerID", user?.id);
 
+
+
+
+    // Trial code (Start).
     try {
-      const result = await sentenRcd.save();
-      setStatus({ 
-        type: 'success', 
-        message: `Created object: ${result.id}` 
+      let newID
+
+      if (data && (typeof data.rcdID !== 'undefined')) {
+        newID = await Parse.Cloud.run('updateRcd',{
+          sentence:formData.sentence.trim(),
+          engTrans:formData.engTrans.trim(),
+          jpnTrans:formData.jpnTrans.trim(),
+          fmlFlag:(langProtocol=='Formal'),
+          cslFlag:(langProtocol=='Casual'),
+          recordID:data.rcdID
+        });
+      } else {
+        newID = await Parse.Cloud.run('makeUnqRcd',{
+          sentence:formData.sentence.trim(),
+          engTrans:formData.engTrans.trim(),
+          jpnTrans:formData.jpnTrans.trim(),
+          fmlFlag:(langProtocol=='Formal'),
+          cslFlag:(langProtocol=='Casual'),
+          order:new Date().getTime()
+        });
+      }
+
+      setStatus({
+        type: 'success',
+        message: `Created record: ${newID}`,
       });
-      // Reset form
+
+      // Reset form, etc.
       setFormData({ 
         sentence: '', 
         engTrans: '', 
@@ -158,15 +144,29 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
       });
       setLangProtocol('Neutral');
     } catch (error) {
-      // Type guard for error
-      const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-      setStatus({ 
-        type: 'error', 
-        message: `Error: ${errorMessage}` 
-      });
+      if (error instanceof Parse.Error && error.code === Parse.Error.DUPLICATE_VALUE) {
+        setStatus({
+          type: 'error',
+          message: 'This sentence has already been registered. It cannot appear twice.',
+        });
+      } else {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+        setStatus({
+          type: 'error',
+          message: `Error: ${errorMessage}`,
+        });
+      }
     } finally {
       setLoading(false);
     }
+    // Trial code (End).
+
+
+
+
+
+
+    return;
   };
 
 
@@ -177,12 +177,16 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
 
   return (
     <div style={styles.container}>
-      <div id="message">{statusMsg}</div>
+      {(status.type=='error') &&
+      <div style={styles.feedBack}>
+        {status.message}
+      </div>
+      }
       {(user!==null) &&
       <>
       <div style={styles.header}>
         <h2 style={styles.title}>Enter Data</h2>
-        <button 
+        {/* <button 
           onClick={handleLogout}
           style={styles.logoutButton}
           onMouseEnter={(e) => {
@@ -193,7 +197,8 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
           }}
         >
           Logout
-        </button>
+        </button> */}
+        <LogoutBtn cbkFn={handleLogout}/>
       </div>
 
       <form onSubmit={handleSubmit} style={styles.form}>
@@ -213,8 +218,6 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
                     fieldVal={formData.jpnTrans}
                     fieldChgCbkFn={handleChange}
                     disable={loading} />
-
-
         <div className='flex justify-around items-center m-2'>
           <AwsmBtn clickFn={()=>{swapLangProtocol('Formal')}}
                    btnShape='user-tie'
@@ -227,7 +230,6 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
                    color={langProtocol=='Casual'?'orange-700':'gray-300'}
                    size='2x' />
         </div>
-
         <button 
           type="submit" 
           style={{
@@ -242,16 +244,6 @@ function DataForm({cbkFn,data=null}:{cbkFn?:()=>void,data?:FormData|null}) {
       </form>
       </>
       }
-      {/* {status.message && (
-        <div style={{
-          ...styles.message,
-          backgroundColor: status.type === 'success' ? '#d4edda' : '#f8d7da',
-          color: status.type === 'success' ? '#155724' : '#721c24',
-          border: `1px solid ${status.type === 'success' ? '#c3e6cb' : '#f5c6cb'}`
-        }}>
-          {status.message}
-        </div>
-      )} */}
     </div>
   );
 }; /* End of DataForm */

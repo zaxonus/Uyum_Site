@@ -252,7 +252,7 @@ function AudioManage({recordID,sentence,updFn}:{
 
       {hasAudio &&
       <>
-      <AwsmBtn clickFn={rmvFirstAudio}
+      {/* <AwsmBtn clickFn={rmvFirstAudio}
                btnShape='trash-arrow-up'
                disable={false}
                color={'red-500'}
@@ -266,7 +266,7 @@ function AudioManage({recordID,sentence,updFn}:{
                btnShape='trash-arrow-up'
                disable={false}
                color={'blue-500'}
-               size='2x' />
+               size='2x' /> */}
       <DeleteAudioButton recordID={recordID}
                          onDeleted={()=> {
                           setTicFlag(!ticFlag)

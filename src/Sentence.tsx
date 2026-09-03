@@ -21,7 +21,7 @@ export function SentenceShow({sentence}:{sentence:string}) {
 
 
 export function SentenceUnit({
-  sentence,engTrans,jpnTrans,audioURL,
+  sentence,engTrans,jpnTrans,audioURL,owner,
   playFn,playFlg,cbkFn,cntrib,mng=false,
   rmvFn,pivot,stPvFn,mvPvFn,ordrSts
 }:{
@@ -30,6 +30,7 @@ export function SentenceUnit({
   jpnTrans:string|null
   // play:boolean
   audioURL:Parse.File|null
+  owner:boolean
   playFn:(v:Parse.File)=>void
   playFlg:boolean
   cbkFn:()=>void
@@ -79,7 +80,7 @@ export function SentenceUnit({
 
       {mng &&
       <>
-      {!pivot &&
+      {!pivot && owner &&
       <>
       <span>
       &nbsp;&nbsp;

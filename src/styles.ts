@@ -17,6 +17,11 @@ const extendStyles = (overrides: React.CSSProperties) => ({
 // Styles with proper TypeScript typing.
 export const styles: {[key:string]:React.CSSProperties} = {
   container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    // alignItems: 'center',
+    // alignContent: 'center',
     maxWidth: '400px',
     margin: '50px auto',
     padding: '20px',
@@ -28,9 +33,23 @@ export const styles: {[key:string]:React.CSSProperties} = {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: '20px'
+    marginBottom: '20px',
+    alignSelf: 'stretch'
+  },
+  feedBack: {
+    fontSize: '19px',
+    fontWeight: 'semibold',
+    background: '#AEF',
+    color: '#300',
+    textAlign: 'center',
+    padding:  '10px 5px',
+    marginBottom: '15px',
+    border: '5px solid #d53',
+    borderRadius: '4px',
   },
   title: {
+    fontSize: '21px',
+    fontWeight: 'bold',
     // textAlign: 'center',
     color: '#333',
     // marginBottom: '20px'
@@ -79,5 +98,28 @@ export const styles: {[key:string]:React.CSSProperties} = {
     color: '#f16b12',
     fontWeight: 'bold',
     marginBottom: '15px'
-  }
+  },
+
+
+// const myStyle: React.CSSProperties = 
+cnclAtrb: {
+  backgroundColor: '#d97706',      // bg-amber-600
+  color: '#ecfccb',                // text-lime-100
+  fontFamily: 'ui-serif, Georgia, Cambria, "Times New Roman", Times, serif', // font-serif
+  fontSize: '1.5rem',              // text-2xl
+  lineHeight: '2rem',              // text-2xl
+  fontWeight: 400,                 // font-normal
+  margin: '0.75rem',               // m-3
+  paddingLeft: '0.5rem',           // px-2
+  paddingRight: '0.5rem',          // px-2
+  paddingTop: '0.75rem',           // py-3
+  paddingBottom: '0.75rem',        // py-3
+  borderWidth: '2px',              // border-2
+  borderColor: '#854d0e',          // border-yellow-800
+  borderStyle: 'solid',
+  borderRadius: '0.5rem',          // rounded-lg
+}//;
+
+//export default myStyle;
+
 }; /* End of styles */

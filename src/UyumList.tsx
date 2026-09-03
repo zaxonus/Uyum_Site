@@ -12,10 +12,15 @@ import QRSquare from './components/QRSquare';
 import DataForm from './DataForm';
 import {FormData} from './types';
 import Login from "./Login";
+import Entrance from './Entrance';
 // import ParseObject from "parse/types/ParseObject";
 
 
-function UyumList({mng=false}:{mng?:boolean}) {
+function UyumList({mng=false,cnclFn=null,inKey=false}:{
+  mng?:boolean
+  cnclFn?:(()=>void)|null
+  inKey?:boolean
+}) {
   const [user,setUser] = useState<Parse.User|null>(null),
         [ticFlag,setTicFlag] = useState<boolean>(false),
         [ticData,setTicData] = useState<boolean>(false),
@@ -203,7 +208,8 @@ function UyumList({mng=false}:{mng?:boolean}) {
       await Parse.Cloud.run('deleteAllAudioFiles',{recordID:record.id!});
       console.log('Number of audio files removed : ',audioCount)
     }
-    await record.destroy()
+    await record.destroy();
+    setTicData(!ticData);
   } /* End of rmvRecord */
 
 
@@ -376,6 +382,8 @@ function UyumList({mng=false}:{mng?:boolean}) {
     )
   }
 
+  if (contribute&&!inKey) return <Entrance/>
+
   return (
     <div className="flex flex-col items-center justify-center">
       {!contribGate &&
@@ -405,6 +413,7 @@ function UyumList({mng=false}:{mng?:boolean}) {
                       engTrans={engShow?item.get('engTrans'):null}
                       jpnTrans={jpnShow?item.get('jpnTrans'):null}
                       audioURL={getListenVoice(item)}
+                      owner={item.get('ownerID')==user?.id}
                       playFn={(v:Parse.File)=>{
                         setActivRcd(item.id!)
                         shiftListenVoice(item.id!)
@@ -463,6 +472,14 @@ function UyumList({mng=false}:{mng?:boolean}) {
         }}
       >
         Logout
+      </button>
+      }
+      {(cnclFn!==null) &&
+      <button onClick={cnclFn}
+              style={styles.cnclAtrb}
+              // className={cnclAtrb}
+              >
+                Cancel
       </button>
       }
     </div>

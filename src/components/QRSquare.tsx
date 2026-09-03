@@ -1,7 +1,3 @@
-// import React from 'react';
-// import Image from 'next/image';
-// import "./QRSquare.css";
-
 
 export default function QRSquare(
 {
@@ -15,7 +11,7 @@ export default function QRSquare(
 		let resURL = 'https://api.qrserver.com/v1/create-qr-code/?size=150x150&data='
 		resURL += url
 		return resURL
-	}
+	} /* End of makeQR_URL */
 	
 		return (
     <>
@@ -27,4 +23,4 @@ export default function QRSquare(
       </div>
     </>
   );
-}
+} /* End of QRSquare */

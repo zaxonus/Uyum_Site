@@ -6,8 +6,10 @@ import Login from './Login';
 import DataForm from './DataForm';
 import UyumList from './UyumList';
 import ExtraEntry from './ExtraEntry';
+import Entrance from './Entrance';
 import Katki from './Katki';
 import DataUpLoader from './DataUpLoader';
+import DataBackUp from './DataBackUp';
 
 // Initialize Parse :
 Parse.initialize("i3tzTVEHYEb1EjCo1cyNzHQNz3Ft0oyHX0gjmzD2",
@@ -151,7 +153,10 @@ const UyumApp: React.FC = () => {
       <Route path="/" element={<UyumList/>} />
       <Route path="/SignUp" element={<SignUp/>} />
       <Route path="/ExtraEntry" element={<ExtraEntry/>} />
+      <Route path="/Entrance" element={<Entrance/>} />
       <Route path="/DataLoad" element={<DataUpLoader/>} />
+      <Route path="/BackUp" element={<DataBackUp/>} />
+      
       <Route path="/Katki" element={<Katki/>} />
       <Route path="/Manage" element={<UyumList mng={true} />} />
     </Routes>
